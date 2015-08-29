@@ -1,0 +1,21 @@
+{
+  "name": "app-server",
+  "version": "1.0.0",
+  "description": "Personal flavor of static file http server",
+  "bin": {
+    "app-server": "index.js"
+  },
+  "scripts": {
+    "test": "standard && node test"
+  },
+  "dependencies": {
+    "ecstatic": "^0.8.0"
+  },
+  "devDependencies": {
+    "hyperquest": "^1.2.0",
+    "standard": "^5.1.1"
+  },
+  "repository": "https://github.com/jessetane/app-server",
+  "author": "jesse.tane@gmail.com",
+  "license": "WTFPL"
+}
