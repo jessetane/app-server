@@ -1,42 +1,45 @@
 #!/usr/bin/env node
 
-module.exports = Server
+module.exports = createServer
 
 var http = require('http')
 var ecstatic = require('ecstatic')
 
-function Server (opts) {
-  opts = opts || {}
-  this.host = opts.host || process.env.HOST || '::'
-  this.port = opts.port || process.env.PORT || '8080'
-  this.share = opts.share || process.env.SHARE || 'share'
+function createServer (opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
 
-  this.statics = ecstatic(this.share, {
+  var server = http.createServer(function (req, res) {
+    server.middleware && server.middleware(req, res, function (err) {
+      if (err) {
+        res.statusCode = err.code || 500
+        return res.end(err.message)
+      }
+
+      statics(req, res, function () {
+        req.url = '/'
+        res.statusCode = 200
+        statics(req, res)
+      })
+    })
+  })
+
+  server.host = opts.host || process.env.HOST || '::'
+  server.port = opts.port || process.env.PORT || '8080'
+  server.share = opts.share || process.env.SHARE || 'share'
+  server.listen(server.port, server.host, cb)
+
+  var statics = ecstatic(server.share, {
     cache: 'no-cache'
   })
 
-  var self = this
-  this.http = http.createServer(function (req, res) {
-    self.onrequest && self.onrequest(req)
-    self.statics(req, res, function () {
-      req.url = '/'
-      res.statusCode = 200
-      self.statics(req, res)
-    })
-  })
-}
-
-Server.prototype.open = function (cb) {
-  this.http.listen(this.port, this.host, cb)
-}
-
-Server.prototype.close = function () {
-  this.http.close()
+  return server
 }
 
 if (!module.parent) {
-  var server = new Server()
-  server.open(function (err) {
+  var server = createServer(function (err) {
     if (err) throw err
     console.log('app server listening on ' + server.port)
   })
