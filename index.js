@@ -12,18 +12,17 @@ function createServer (opts, cb) {
   }
 
   var server = http.createServer(function (req, res) {
-    server.middleware && server.middleware(req, res, function (err) {
-      if (err) {
-        res.statusCode = err.code || 500
-        return res.end(err.message)
-      }
-
-      statics(req, res, function () {
-        req.url = '/'
-        res.statusCode = 200
-        statics(req, res)
+    if (server.middleware) {
+      server.middleware(req, res, function (err) {
+        if (err) {
+          res.statusCode = err.code || 500
+          return res.end(err.message)
+        }
+        tryFiles(req, res)
       })
-    })
+    } else {
+      tryFiles(req, res)
+    }
   })
 
   server.host = opts.host || process.env.HOST || '::'
@@ -34,6 +33,14 @@ function createServer (opts, cb) {
   var statics = ecstatic(server.share, {
     cache: 'no-cache'
   })
+
+  function tryFiles (req, res) {
+    statics(req, res, function () {
+      req.url = '/'
+      res.statusCode = 200
+      statics(req, res)
+    })
+  }
 
   return server
 }
