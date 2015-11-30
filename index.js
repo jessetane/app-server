@@ -25,15 +25,6 @@ function createServer (opts, cb) {
     }
   })
 
-  server.host = opts.host || process.env.HOST || '::'
-  server.port = opts.port || process.env.PORT || '8080'
-  server.share = opts.share || process.env.SHARE || 'share'
-  server.listen(server.port, server.host, cb)
-
-  var statics = ecstatic(server.share, {
-    cache: 'no-cache'
-  })
-
   function tryFiles (req, res) {
     statics(req, res, function () {
       req.url = '/'
@@ -41,6 +32,15 @@ function createServer (opts, cb) {
       statics(req, res)
     })
   }
+
+  server.host = opts.host || process.env.HOST || '::'
+  server.port = opts.port || process.env.PORT || '8080'
+  server.root = opts.root || process.env.ROOT || 'public'
+  server.listen(server.port, server.host, cb)
+
+  var statics = ecstatic(server.root, {
+    cache: 'no-cache'
+  })
 
   return server
 }
