@@ -1,16 +1,15 @@
-var FileServer = require('../')
+var createServer = require('../')
 var request = require('hyperquest')
 var fs = require('fs')
 
 var expected = fs.readFileSync('test/fixture/index.html', 'utf8')
 
-var server = new FileServer({
-  port: 7357,
-  share: 'test/fixture'
-})
-
-server.open(function (err) {
+var server = createServer({
+  port: '7357',
+  root: 'test/fixture'
+}, function (err) {
   if (err) throw err
+  if (server.port !== '7357') throw new Error('ports do not match')
 
   dorequest('http://localhost:7357', function (err, res) {
     if (err) throw err
@@ -30,6 +29,7 @@ server.open(function (err) {
           throw new Error('response did not equal expected value')
         }
 
+        console.log('all tests pass')
         server.close()
       })
     })
