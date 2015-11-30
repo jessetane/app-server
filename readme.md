@@ -13,9 +13,9 @@ As a standalone executable:
 $ app-server
 ```
 
-Use env vars to change the default host / port / shared directory:
+Use env vars to change the default host / port / root directory:
 ```bash
-$ HOST='::' PORT=8080 SHARE=share app-server
+$ HOST='::' PORT=8080 ROOT=public app-server
 ```
 
 As a JavaScript library:
@@ -26,7 +26,7 @@ var createServer = require('app-server')
 var server = createServer({
   host: '::',
   port: 8080,
-  share: 'share'
+  root: 'public'
 })
 
 // get a callback after the server starts
@@ -34,14 +34,21 @@ var server = createServer(function (err) {
   if (err) throw err
   console.log('app server listening on ' + server.port)
 })
+
+// optionally attach connect-style middleware
+server.middleware = function (req, res, next) {
+  next()
+}
 ```
 
 ## Install
 ```bash
-$ npm install jessetane/app-server#2.0.0
+$ npm install jessetane/app-server
 ```
 
 ## Changes
+* 3.0.0
+  * Change default root directory to "public"
 * 2.0.0
   * Don't export a class, make connect compatible.
 
