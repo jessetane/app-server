@@ -1,6 +1,6 @@
 {
   "name": "app-server",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Personal flavor of static file http server",
   "bin": {
     "app-server": "index.js"
