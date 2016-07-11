@@ -58,4 +58,4 @@ $ npm run test
 ```
 
 ## License
-WTFPL
+MIT
