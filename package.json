@@ -9,7 +9,7 @@
     "test": "standard && node test"
   },
   "dependencies": {
-    "ecstatic": "^1.4.1"
+    "ecstatic": "^4.1.4"
   },
   "devDependencies": {
     "hyperquest": "^1.2.0",
