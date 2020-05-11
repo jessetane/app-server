@@ -39,7 +39,10 @@ function createServer (opts, cb) {
   server.listen(server.port, server.host, cb)
 
   var statics = ecstatic(server.root, {
-    cache: 'no-cache'
+    cache: 'no-cache',
+    mime: {
+      'application/javascript': ['js', 'mjs']
+    }
   })
 
   return server
