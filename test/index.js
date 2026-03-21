@@ -1,51 +1,35 @@
-var createServer = require('../')
-var request = require('hyperquest')
-var fs = require('fs')
+import fs from 'fs'
+import createServer from '../index.js'
 
-var expected = fs.readFileSync('test/fixture/index.html', 'utf8')
+const expected = fs.readFileSync('test/fixture/index.html', 'utf8')
 
-var server = createServer({
+const server = createServer({
   port: '7357',
-  root: 'test/fixture'
-}, function (err) {
-  if (err) throw err
-  if (server.port !== '7357') throw new Error('ports do not match')
-
-  dorequest('http://localhost:7357', function (err, res) {
-    if (err) throw err
-    if (res !== expected) {
-      throw new Error('response did not equal expected value')
-    }
-
-    dorequest('http://localhost:7357/test.txt', function (err, res) {
-      if (err) throw err
-      if (res !== '-') {
-        throw new Error('response did not equal expected value')
-      }
-
-      dorequest('http://localhost:7357/bogus.html', function (err, res) {
-        if (err) throw err
-        if (res !== expected) {
-          throw new Error('response did not equal expected value')
-        }
-
-        console.log('all tests pass')
-        server.close()
-      })
-    })
-  })
+  root: 'test/fixture',
+  spa: ['/spa']
 })
 
-function dorequest (url, cb) {
-  var res = ''
-  request(url)
-    .on('data', function (data) {
-      res += data.toString()
-    })
-    .on('error', function (err) {
-      cb(err)
-    })
-    .on('end', function () {
-      cb(null, res)
-    })
+try {
+	const res1 = await fetch('http://localhost:7357')
+	const text1 = await res1.text()
+	if (text1 !== expected) throw new Error('response did not equal expected value')
+
+	const res2 = await fetch('http://localhost:7357/test.txt')
+	const text2 = await res2.text()
+	if (text2 !== '-') throw new Error('response did not equal expected value')
+
+	const res3 = await fetch('http://localhost:7357/bogus.html')
+	const text3 = await res3.text()
+	if (text3 !== expected) throw new Error('response did not equal expected value')
+
+	const res4 = await fetch('http://localhost:7357/spa', { redirect: 'manual' })
+	const text4 = await res4.text()
+	if (res4.status !== 200 || text4 !== expected) throw new Error('response for /spa did not equal expected SPA index value')
+
+	console.log('all tests pass')
+} catch (err) {
+	console.error(err)
+	process.exitCode = 1
+} finally {
+	server.close()
 }

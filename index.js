@@ -1,19 +1,14 @@
 #!/usr/bin/env node
 
-module.exports = createServer
+import fs from 'fs'
+import http from 'http'
+import ecstatic from 'ecstatic'
 
-var http = require('http')
-var ecstatic = require('ecstatic')
-
-function createServer (opts, cb) {
-  if (typeof opts === 'function') {
-    cb = opts
-    opts = {}
-  }
-
-  var server = http.createServer(function (req, res) {
+export default function createServer (opts = {}) {
+  const spaRoutes = opts.spa || []
+  const server = http.createServer((req, res) => {
     if (server.middleware) {
-      server.middleware(req, res, function (err) {
+      server.middleware(req, res, err => {
         if (err) {
           res.statusCode = err.code || 500
           return res.end(err.message)
@@ -24,33 +19,49 @@ function createServer (opts, cb) {
       tryFiles(req, res)
     }
   })
-
   function tryFiles (req, res) {
-    statics(req, res, function () {
+    const pathname = req.url.split('?')[0]
+    if (spaRoutes.includes(pathname)) {
+      req.url = '/'
+      res.statusCode = 200
+      return statics(req, res)
+    }
+    statics(req, res, () => {
       req.url = '/'
       res.statusCode = 200
       statics(req, res)
     })
   }
-
   server.host = opts.host || process.env.HOST || '::'
   server.port = opts.port || process.env.PORT || '8080'
   server.root = opts.root || process.env.ROOT || 'public'
-  server.listen(server.port, server.host, cb)
-
-  var statics = ecstatic(server.root, {
+  server.listen(server.port, server.host)
+  const statics = ecstatic(server.root, {
     cache: 'no-cache',
     mime: {
       'application/javascript': ['js', 'mjs']
     }
   })
-
   return server
 }
 
-if (!module.parent) {
-  var server = createServer(function (err) {
+if (import.meta.main) {
+  const args = process.argv.slice(2)
+  const opts = { spa: [] }
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]
+    if (arg === '--host' || arg === '-h') {
+      opts.host = args[++i]
+    } else if (arg === '--port' || arg === '-p') {
+      opts.port = args[++i]
+    } else if (arg === '--root' || arg === '-r') {
+      opts.root = args[++i]
+    } else if (arg.startsWith('--spa=')) {
+      opts.spa = arg.split('=')[1].split(',')
+    }
+  }
+  const server = createServer(opts, err => {
     if (err) throw err
-    console.log('app server listening on ' + server.port)
+    console.log(`app server listening on ${server.port}`)
   })
 }
