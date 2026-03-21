@@ -1,6 +1,6 @@
 {
   "name": "app-server",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Personal flavor of static file http server",
   "type": "module",
   "bin": {
