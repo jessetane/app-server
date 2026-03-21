@@ -10,26 +10,30 @@ const server = createServer({
 })
 
 try {
-	const res1 = await fetch('http://localhost:7357')
-	const text1 = await res1.text()
-	if (text1 !== expected) throw new Error('response did not equal expected value')
+  let res = await fetch('http://localhost:7357')
+  let text = await res.text()
+  if (text !== expected) throw new Error('response did not equal expected value')
 
-	const res2 = await fetch('http://localhost:7357/test.txt')
-	const text2 = await res2.text()
-	if (text2 !== '-') throw new Error('response did not equal expected value')
+  res = await fetch('http://localhost:7357/test.txt')
+  text = await res.text()
+  if (text !== '-') throw new Error('response did not equal expected value')
 
-	const res3 = await fetch('http://localhost:7357/bogus.html')
-	const text3 = await res3.text()
-	if (text3 !== expected) throw new Error('response did not equal expected value')
+  res = await fetch('http://localhost:7357/bogus.html')
+  text = await res.text()
+  if (text !== expected) throw new Error('response did not equal expected value')
 
-	const res4 = await fetch('http://localhost:7357/spa', { redirect: 'manual' })
-	const text4 = await res4.text()
-	if (res4.status !== 200 || text4 !== expected) throw new Error('response for /spa did not equal expected SPA index value')
+  res = await fetch('http://localhost:7357/spa', { redirect: 'manual' })
+  text = await res.text()
+  if (res.status !== 200 || text !== expected) throw new Error('response for /spa did not equal expected SPA index value')
 
-	console.log('all tests pass')
+  res = await fetch('http://localhost:7357/spa/', { redirect: 'manual' })
+  text = await res.text()
+  if (res.status !== 200 || text !== expected) throw new Error('response for /spa/ did not equal expected SPA index value')
+
+  console.log('all tests pass')
 } catch (err) {
-	console.error(err)
-	process.exitCode = 1
+  console.error(err)
+  process.exitCode = 1
 } finally {
-	server.close()
+  server.close()
 }

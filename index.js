@@ -20,7 +20,10 @@ export default function createServer (opts = {}) {
     }
   })
   function tryFiles (req, res) {
-    const pathname = req.url.split('?')[0]
+    let pathname = req.url.split('?')[0]
+    if (pathname.length > 1 && pathname.endsWith('/')) {
+      pathname = pathname.slice(0, -1)
+    }
     if (spaRoutes.includes(pathname)) {
       req.url = '/'
       res.statusCode = 200
