@@ -10,7 +10,7 @@ When serving JavaScript applications, it's convenient to have an http server tha
 ## Example
 As a standalone executable:
 ```bash
-$ app-server --port 3000 --spa=/about,/settings
+$ app-server --port 3000 --spa /about,/settings
 ```
 
 Use env vars to change the default host / port / root directory:

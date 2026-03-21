@@ -56,8 +56,8 @@ if (import.meta.main) {
       opts.port = args[++i]
     } else if (arg === '--root' || arg === '-r') {
       opts.root = args[++i]
-    } else if (arg.startsWith('--spa=')) {
-      opts.spa = arg.split('=')[1].split(',')
+    } else if (arg === '--spa' || arg === '-s') {
+      opts.spa = args[++i].split(',')
     }
   }
   const server = createServer(opts, err => {
