@@ -1,7 +1,7 @@
 {
   "name": "app-server",
-  "version": "5.0.1",
-  "description": "Personal flavor of static file http server",
+  "version": "5.0.2",
+  "description": "Static file HTTP server for SPAs",
   "type": "module",
   "bin": {
     "app-server": "index.js"

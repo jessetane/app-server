@@ -1,5 +1,5 @@
 # app-server
-Personal flavor of static file http server
+Static file HTTP server for SPAs.
 
 ## Why
 When serving JavaScript applications, it's convenient to have an http server that will serve static files if they exist, but fall back to serving index.html if they don't.
