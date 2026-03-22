@@ -1,6 +1,6 @@
 {
   "name": "app-server",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Static file HTTP server for SPAs",
   "type": "module",
   "bin": {
