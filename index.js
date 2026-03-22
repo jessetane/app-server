@@ -63,8 +63,8 @@ if (import.meta.main) {
       opts.spa = args[++i].split(',')
     }
   }
-  const server = createServer(opts, err => {
-    if (err) throw err
-    console.log(`app server listening on ${server.port}`)
-  })
+  const server = createServer(opts)
+	server.once('listening', () => {
+		console.log(`app-server listening on ${server.port}`)
+	})
 }
